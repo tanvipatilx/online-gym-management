@@ -2,19 +2,19 @@
 
 A web-based Online Gym Management System developed using Python and Django to simplify and automate gym operations such as member management, trainer management, membership plans, and payment tracking. The system provides secure role-based authentication for Admin, Trainer, and Member users along with responsive dashboards and database management using SQL . Designed with HTML, CSS, Bootstrap, and Django ORM, the project offers an efficient, user-friendly, and scalable solution for modern fitness centers.
 
-## Technology Stack and Tools Used :
+## Technology Stack and Tools Used 
 
-### Programming Language- 
+### Programming Language 
 Python 3.x
-###Framework- 
+### Framework 
 Django
-### Frontend Technologies- 
+### Frontend Technologies
 HTML5, CSS, Bootstrap, JavaScript
-### Database- 
+### Database 
 SQLite , MySQL
-### Development Tools- 
+### Development Tools 
 Visual Studio Code (VS Code), PyCharm
-### Version Control- 
+### Version Control 
 Git & GitHub
 
 ## Features and Functionalities Implemented
@@ -39,6 +39,6 @@ Git & GitHub
 6. Start the server using: "python manage.py runserver"
 7. Open browser and visit: "http://127.0.0.1:8000/"
 
-## Team Member- 
+## Team Member 
 Tanvi Patil
 
