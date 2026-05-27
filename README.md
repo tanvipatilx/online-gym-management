@@ -2,6 +2,8 @@
 
 A web-based Online Gym Management System developed using Python and Django to simplify and automate gym operations such as member management, trainer management, membership plans, and payment tracking. The system provides secure role-based authentication for Admin, Trainer, and Member users along with responsive dashboards and database management using SQL . Designed with HTML, CSS, Bootstrap, and Django ORM, the project offers an efficient, user-friendly, and scalable solution for modern fitness centers.
 
+---
+
 ## Technology Stack and Tools Used 
 
 ### Programming Language 
@@ -16,6 +18,8 @@ SQLite , MySQL
 Visual Studio Code (VS Code), PyCharm
 ### Version Control 
 Git & GitHub
+
+---
 
 ## Features and Functionalities
 
@@ -45,6 +49,8 @@ Git & GitHub
 
 9. **CRUD Operations (Add, Update, Delete, View)**  
    Implements complete CRUD functionality for managing gym-related data dynamically.
+
+---
 
 ## Installation / Execution Steps to Run the Project
 
@@ -142,12 +148,18 @@ http://127.0.0.1:8000/
 - Register a new account or
 - Login using admin/member credentials to access dashboards and features.
 
+---
+
 ## Academic Team and Project Guidance
 This project was developed as a B.Tech III-Year Minor Project in Computer Science and Engineering at Medi-Caps University, Indore.
+
+---
 
 ## Project Mentors and Guides
 - Prof. Arjun Dixit
 - Prof. Rashmi Vijayvargiya
+
+---
 
 ## Team Member 
 Tanvi Patil (Enrollment Number: EN23CS3011077)
