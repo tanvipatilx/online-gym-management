@@ -146,14 +146,14 @@ http://127.0.0.1:8000/
 This project was developed as a B.Tech III-Year Minor Project in Computer Science and Engineering at Medi-Caps University, Indore.
 
 ## Project Mentors and Guides
--Prof. Arjun Dixit
--Prof. Rashmi Vijayvargiya
+- Prof. Arjun Dixit
+- Prof. Rashmi Vijayvargiya
 
 ## Team Member 
 Tanvi Patil (Enrollment Number: EN23CS3011077)
 
 ## Institution Details
--Department of Computer Science and Engineering
--Faculty of Engineering, Medi-Caps University, Indore - 453331
--Date of Submission: April 2026
+- Department of Computer Science and Engineering
+- Faculty of Engineering, Medi-Caps University, Indore - 453331
+- Date of Submission: April 2026
 
