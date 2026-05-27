@@ -19,15 +19,15 @@ Git & GitHub
 
 ## Features and Functionalities Implemented
 
-1.User Registration & Login Authentication
-2.Role-Based Dashboards (Admin, Trainer, Member)
-3.Member Management System
-4.Trainer Management
-5.Membership Plan Management
-6.Payment Tracking & Records
-7.Secure Database Management using Django ORM
-8.Responsive and User-Friendly Interface
-9.CRUD Operations (Add, Update, Delete, View)
+1. User Registration & Login Authentication
+2. Role-Based Dashboards (Admin, Trainer, Member)
+3. Member Management System
+4. Trainer Management
+5. Membership Plan Management
+6. Payment Tracking & Records
+7. Secure Database Management using Django ORM
+8. Responsive and User-Friendly Interface
+9. CRUD Operations (Add, Update, Delete, View)
 
 ## Installation/Execution Steps to Run the Project
 
