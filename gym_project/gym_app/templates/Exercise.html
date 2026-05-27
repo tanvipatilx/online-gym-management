@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block nav_exercise %}active{% endblock %}
+
+{% block content %}
+<div class="feature-page">
+
+    <div class="fp-section-label"><i class="bi bi-activity"></i> Manage</div>
+    <div class="fp-title">Exercises <span>/</span> {% if form.id %}Edit Record{% else %}Add New{% endif %}</div>
+
+    <div class="fp-card" style="--c:#f87171;">
+        <div class="fp-card-head">
+            <div class="fp-card-icon" style="background:rgba(230,57,70,0.15); color:#f87171;">
+                <i class="bi bi-activity"></i>
+            </div>
+            <div>
+                <h3>{% if form.id %}Edit Exercise{% else %}New Exercise{% endif %}</h3>
+                <p>Define exercises, muscle groups, sets and reps</p>
+            </div>
+        </div>
+        <div class="fp-card-body">
+            {% if form.message %}
+                <div class="{% if form.error %}alert-dark-error{% else %}alert-dark-success{% endif %} mb-4">
+                    <i class="bi {% if form.error %}bi-exclamation-circle{% else %}bi-check-circle{% endif %}"></i>
+                    {{ form.message }}
+                </div>
+            {% endif %}
+            <form method="POST" autocomplete="off">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ form.id }}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Exercise Name</label>
+                        <input type="text" class="form-control" name="name" value="{{ form.name }}" placeholder="e.g. Bench Press">
+                        {% if form.inputError.name %}<div class="field-error"><i class="bi bi-exclamation-circle"></i>{{ form.inputError.name }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Muscle Group</label>
+                        <select class="form-select" name="muscle_group">
+                            <option value="">— Select muscle group —</option>
+                            <option value="Chest" {% if form.muscle_group == "Chest" %}selected{% endif %}>🫁 Chest</option>
+                            <option value="Back" {% if form.muscle_group == "Back" %}selected{% endif %}>🔙 Back</option>
+                            <option value="Shoulders" {% if form.muscle_group == "Shoulders" %}selected{% endif %}>💪 Shoulders</option>
+                            <option value="Arms" {% if form.muscle_group == "Arms" %}selected{% endif %}>💪 Arms</option>
+                            <option value="Core" {% if form.muscle_group == "Core" %}selected{% endif %}>⚡ Core</option>
+                            <option value="Legs" {% if form.muscle_group == "Legs" %}selected{% endif %}>🦵 Legs</option>
+                            <option value="Full Body" {% if form.muscle_group == "Full Body" %}selected{% endif %}>🏋️ Full Body</option>
+                        </select>
+                        {% if form.inputError.muscle_group %}<div class="field-error"><i class="bi bi-exclamation-circle"></i>{{ form.inputError.muscle_group }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Sets</label>
+                        <input type="number" class="form-control" name="sets" value="{{ form.sets }}" placeholder="3">
+                        {% if form.inputError.sets %}<div class="field-error"><i class="bi bi-exclamation-circle"></i>{{ form.inputError.sets }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Reps</label>
+                        <input type="number" class="form-control" name="reps" value="{{ form.reps }}" placeholder="12">
+                        {% if form.inputError.reps %}<div class="field-error"><i class="bi bi-exclamation-circle"></i>{{ form.inputError.reps }}</div>{% endif %}
+                    </div>
+                </div>
+                <hr class="form-divider mt-4">
+                <button type="submit" class="btn-fp-submit">
+                    <i class="bi bi-check-lg"></i>{% if form.id %}Update Exercise{% else %}Add Exercise{% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="fp-table-section">
+        <div class="fp-table-heading"><i class="bi bi-table"></i> Records</div>
+        <div class="fp-table-title">All <span>Exercises</span> <span class="count-badge">{{ exerciseList|length }}</span></div>
+        {% if exerciseList %}
+        <div class="data-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr><th>#</th><th>Name</th><th>Muscle Group</th><th>Sets</th><th>Reps</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for ex in exerciseList %}
+                    <tr>
+                        <td class="muted">{{ forloop.counter }}</td>
+                        <td><i class="bi bi-activity me-2" style="color:#f87171;"></i>{{ ex.name }}</td>
+                        <td><span class="status-badge" style="background:rgba(230,57,70,0.1);color:#f87171;">{{ ex.muscle_group }}</span></td>
+                        <td class="muted">{{ ex.sets }}</td>
+                        <td class="muted">{{ ex.reps }}</td>
+                        <td><a href="/gym_app/Exercise/edit/{{ ex.id }}" class="btn-table-edit"><i class="bi bi-pencil"></i> Edit</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-activity"></i>
+            <p>No exercises yet. Add your first exercise using the form above.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

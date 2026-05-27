@@ -1,0 +1,608 @@
+{% extends "base.html" %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+<style>
+    /* ── Animations ── */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes blink {
+        0%,49% { opacity:1; } 50%,100% { opacity:0; }
+    }
+    @keyframes pulseGlow {
+        0%,100% { box-shadow: 0 0 18px var(--accent-glow); }
+        50%      { box-shadow: 0 0 40px rgba(57,255,20,0.55); }
+    }
+    @keyframes edgePulse {
+        0%,100% { opacity:1; } 50% { opacity:0.4; }
+    }
+
+    /* Scroll reveal */
+    .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.from-left  { transform: translateX(-40px); }
+    .reveal.from-right { transform: translateX(40px); }
+    .reveal.revealed   { opacity: 1; transform: translate(0); }
+
+    /* Stagger children */
+    .stagger > * { opacity:0; transform:translateY(24px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .stagger.revealed > *:nth-child(1) { opacity:1; transform:none; transition-delay:0.05s; }
+    .stagger.revealed > *:nth-child(2) { opacity:1; transform:none; transition-delay:0.15s; }
+    .stagger.revealed > *:nth-child(3) { opacity:1; transform:none; transition-delay:0.25s; }
+    .stagger.revealed > *:nth-child(4) { opacity:1; transform:none; transition-delay:0.35s; }
+    .stagger.revealed > *:nth-child(5) { opacity:1; transform:none; transition-delay:0.45s; }
+    .stagger.revealed > *:nth-child(6) { opacity:1; transform:none; transition-delay:0.55s; }
+    .stagger.revealed > *:nth-child(7) { opacity:1; transform:none; transition-delay:0.65s; }
+
+    /* Navbar scroll effect */
+    #main-nav.nav-scrolled { box-shadow: 0 4px 24px rgba(0,0,0,0.5); }
+
+    /* ── Hero ── */
+    .hero-section {
+        position: relative;
+        min-height: 88vh;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+    #parallax-img {
+        position: absolute;
+        inset: -30% 0;
+        background-image: url('/static/images/gym_bg.jpg.png');
+        background-size: cover;
+        background-position: center 100%;
+        will-change: transform;
+        z-index: 0;
+    }
+    .hero-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(100deg, rgba(0,0,0,0.75) 0%, rgba(5,20,5,0.55) 40%, rgba(0,0,0,0.15) 100%);
+        z-index: 1;
+    }
+    .hero-edge {
+        position: absolute; left:0; top:0; bottom:0; width:5px;
+        background: var(--accent);
+        animation: edgePulse 2.5s ease infinite;
+        z-index: 2;
+    }
+    .hero-inner {
+        position: relative; z-index: 3;
+        padding: 80px 60px;
+        max-width: 720px;
+    }
+    .hero-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: var(--accent-dim);
+        border: 1px solid rgba(57,255,20,0.35);
+        color: var(--accent);
+        font-family: 'Oswald', sans-serif;
+        font-size: 0.72rem; font-weight: 600;
+        letter-spacing: 2.5px; text-transform: uppercase;
+        padding: 5px 14px; border-radius: 2px; margin-bottom: 20px;
+        animation: fadeInUp 0.6s ease 0.2s both;
+    }
+    .hero-h1 {
+        font-family: 'Oswald', sans-serif;
+        font-size: 4.2rem; font-weight: 700;
+        color: #fff; line-height: 1.05;
+        margin-bottom: 8px;
+        text-transform: uppercase; letter-spacing: -1px;
+        animation: fadeInUp 0.6s ease 0.4s both;
+        min-height: 2.2em;
+    }
+    .hero-h1 span { color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); }
+    .typed-cursor {
+        display: inline-block; width: 3px; height: 0.85em;
+        background: var(--accent); margin-left: 4px;
+        vertical-align: middle;
+        animation: blink 0.9s infinite;
+    }
+    .hero-desc {
+        font-size: 0.9rem; color: rgba(255,255,255,0.42);
+        line-height: 1.8; max-width: 460px; margin-bottom: 32px;
+        animation: fadeInUp 0.6s ease 0.6s both;
+    }
+    .hero-actions {
+        display: flex; gap: 14px; flex-wrap: wrap;
+        animation: fadeInUp 0.6s ease 0.8s both;
+    }
+    .btn-hero-primary {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: var(--accent); color: #000;
+        font-family: 'Oswald', sans-serif;
+        font-size: 0.88rem; font-weight: 700;
+        letter-spacing: 2px; text-transform: uppercase;
+        padding: 13px 28px; border-radius: 3px;
+        text-decoration: none; transition: all 0.2s ease;
+        box-shadow: 0 0 20px var(--accent-glow);
+        animation: pulseGlow 3s ease infinite;
+    }
+    .btn-hero-primary:hover { background:#fff; color:#000; transform:translateX(3px); }
+    .btn-hero-secondary {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: transparent; color: #fff;
+        font-family: 'Oswald', sans-serif;
+        font-size: 0.88rem; font-weight: 600;
+        letter-spacing: 2px; text-transform: uppercase;
+        padding: 13px 28px;
+        border: 1px solid rgba(255,255,255,0.25); border-radius: 3px;
+        text-decoration: none; transition: all 0.2s ease;
+    }
+    .btn-hero-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Stats strip ── */
+    .stats-strip {
+        background: #000;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: 24px 60px;
+        display: flex; gap: 0;
+    }
+    .stat-item {
+        flex: 1; text-align: center;
+        border-right: 1px solid var(--border);
+        padding: 0 20px;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+        font-family: 'Oswald', sans-serif;
+        font-size: 2.2rem; font-weight: 700;
+        color: var(--accent); line-height: 1;
+        text-shadow: 0 0 20px var(--accent-glow);
+    }
+    .stat-lbl {
+        font-size: 0.75rem; color: var(--muted);
+        letter-spacing: 1px; text-transform: uppercase; margin-top: 4px;
+    }
+
+    /* ── About ── */
+    .about-section {
+        background: #0d0f14;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+    }
+    .about-text { padding: 70px 60px; }
+    .about-title {
+        font-family: 'Oswald', sans-serif;
+        font-size: 2.4rem; font-weight: 700;
+        color: #fff; text-transform: uppercase;
+        line-height: 1.1; margin-bottom: 14px;
+    }
+    .about-title span { color: var(--accent); }
+    .about-divider {
+        width: 60px; height: 4px;
+        background: var(--accent); border-radius: 2px;
+        margin-bottom: 24px;
+        box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .about-para {
+        font-size: 0.88rem; color: rgba(255,255,255,0.55);
+        line-height: 1.85; margin-bottom: 16px;
+    }
+    .about-para strong { color: #fff; }
+    .about-img-wrap {
+        height: 100%; min-height: 480px;
+        overflow: hidden; position: relative;
+    }
+    .about-img {
+        width: 100%; height: 100%;
+        object-fit: cover; object-position: center;
+        display: block; filter: brightness(0.85);
+        transition: transform 0.6s ease;
+    }
+    .about-img-wrap:hover .about-img { transform: scale(1.04); }
+
+    /* ── Slideshow ── */
+    .about-slideshow {
+        position: relative;
+        height: 100%; min-height: 480px;
+        overflow: hidden;
+    }
+    .slide {
+        position: absolute; inset: 0;
+        opacity: 0;
+        transition: opacity 0.8s ease, transform 0.8s ease;
+        transform: scale(1.04);
+    }
+    .slide.active {
+        opacity: 1;
+        transform: scale(1);
+        position: relative;
+    }
+    .slide img {
+        width: 100%; height: 100%; min-height: 480px;
+        object-fit: cover; object-position: center;
+        display: block; filter: brightness(0.82);
+    }
+    /* Dots */
+    .slide-dots {
+        position: absolute; bottom: 16px; left: 50%;
+        transform: translateX(-50%);
+        display: flex; gap: 8px; z-index: 10;
+    }
+    .dot {
+        width: 8px; height: 8px; border-radius: 50%;
+        background: rgba(255,255,255,0.35);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    .dot.active {
+        background: var(--accent);
+        box-shadow: 0 0 8px var(--accent-glow);
+        width: 22px; border-radius: 4px;
+    }
+    /* Arrows */
+    .slide-arrow {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        background: rgba(0,0,0,0.55);
+        border: 1px solid rgba(57,255,20,0.25);
+        color: #fff; width: 38px; height: 38px;
+        border-radius: 50%; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem; z-index: 10;
+        transition: all 0.2s ease;
+    }
+    .slide-arrow:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+    .slide-arrow.prev { left: 14px; }
+    .slide-arrow.next { right: 14px; }
+
+    /* ── Modules ── */
+    .modules-section { background: var(--bg-main); padding: 60px; }
+    .section-heading {
+        font-family: 'Oswald', sans-serif;
+        font-size: 0.7rem; font-weight: 600;
+        letter-spacing: 3px; text-transform: uppercase;
+        color: var(--accent);
+        display: flex; align-items: center; gap: 12px;
+        margin-bottom: 8px;
+    }
+    .section-heading::after { content:''; flex:1; height:1px; background:rgba(57,255,20,0.2); }
+    .section-title {
+        font-family: 'Oswald', sans-serif;
+        font-size: 2rem; font-weight: 700;
+        color: #fff; text-transform: uppercase;
+        margin-bottom: 32px; letter-spacing: -0.5px;
+    }
+    .section-title span { color: var(--accent); }
+    .mod-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px; padding: 24px;
+        text-decoration: none; display: block;
+        transition: all 0.25s ease;
+        position: relative; overflow: hidden; height: 100%;
+        transform-style: preserve-3d;
+    }
+    .mod-card::before {
+        content: ''; position: absolute;
+        top:0; left:0; right:0; height:3px;
+        background: var(--c, var(--accent));
+        transform: scaleX(0); transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+    .mod-card:hover { border-color:rgba(57,255,20,0.2); background:var(--bg-card2); box-shadow:0 16px 40px rgba(0,0,0,0.5); }
+    .mod-card:hover::before { transform: scaleX(1); }
+    .mod-icon {
+        width:46px; height:46px; border-radius:10px;
+        display:flex; align-items:center; justify-content:center;
+        font-size:1.3rem; margin-bottom:16px;
+    }
+    .mod-card h5 {
+        font-family:'Oswald',sans-serif; font-size:1rem;
+        font-weight:700; letter-spacing:1px; color:#fff;
+        margin:0 0 6px; text-transform:uppercase;
+    }
+    .mod-card p { font-size:0.78rem; color:var(--muted); margin:0; line-height:1.6; }
+    .mod-arrow {
+        position:absolute; bottom:20px; right:20px;
+        color:rgba(255,255,255,0.1); font-size:1.1rem;
+        transition:all 0.2s ease;
+    }
+    .mod-card:hover .mod-arrow { color:var(--accent); right:16px; }
+
+    /* ── Testimonials ── */
+    .testimonials-section {
+        background: #0a0c10; padding: 60px;
+        border-top: 1px solid var(--border);
+    }
+    .testi-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px; padding: 28px;
+        height: 100%; transition: all 0.25s ease;
+        position: relative; overflow: hidden;
+        transform-style: preserve-3d;
+    }
+    .testi-card::before {
+        content: '\201C';
+        position: absolute; top:-10px; right:20px;
+        font-size:8rem; color:rgba(57,255,20,0.06);
+        font-family:Georgia,serif; line-height:1; pointer-events:none;
+    }
+    .testi-card.featured {
+        border-color: rgba(57,255,20,0.3);
+        background: var(--bg-card2);
+        box-shadow: 0 0 30px rgba(57,255,20,0.08);
+    }
+    .testi-card:hover { border-color:rgba(57,255,20,0.25); box-shadow:0 14px 40px rgba(0,0,0,0.4); }
+    .testi-stars { color:var(--accent); font-size:0.85rem; margin-bottom:16px; display:flex; gap:3px; }
+    .testi-text { font-size:0.88rem; color:rgba(255,255,255,0.6); line-height:1.8; margin-bottom:24px; font-style:italic; }
+    .testi-author { display:flex; align-items:center; gap:12px; }
+    .testi-avatar {
+        width:42px; height:42px; border-radius:50%;
+        background:#1e2330; border:2px solid var(--border);
+        display:flex; align-items:center; justify-content:center;
+        font-family:'Oswald',sans-serif; font-size:0.8rem; font-weight:700;
+        color:var(--accent); flex-shrink:0;
+    }
+    .testi-name { font-family:'Oswald',sans-serif; font-size:0.95rem; font-weight:600; color:#fff; letter-spacing:0.5px; }
+    .testi-role { font-size:0.75rem; color:var(--muted); margin-top:2px; }
+</style>
+
+<!-- HERO -->
+<div class="hero-section">
+    <div id="parallax-img"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-edge"></div>
+    <div class="hero-inner">
+        <div class="hero-badge"><i class="bi bi-lightning-charge-fill"></i> TitanFlow</div>
+        <h1 class="hero-h1"><span id="typed-text">The Grind Never Sleeps,</span><span class="typed-cursor"></span><br>And Neither Does <span>The Flow.</span></h1>
+        <p class="hero-desc">
+            Manage trainers, members, memberships, payments,
+            workout plans and equipment — all from one powerful platform.
+        </p>
+        <div class="hero-actions">
+            <a href="/gym_app/Member/" class="btn-hero-primary"><i class="bi bi-arrow-right"></i> Join Now</a>
+            <a href="/gym_app/Trainer/" class="btn-hero-secondary"><i class="bi bi-play-circle"></i> Our Trainers</a>
+        </div>
+    </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip reveal">
+    <div class="stat-item">
+        <div class="stat-num" data-target="500" data-suffix="+">0+</div>
+        <div class="stat-lbl">Active Members</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-num" data-target="50" data-suffix="+">0+</div>
+        <div class="stat-lbl">Expert Trainers</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-num">24/7</div>
+        <div class="stat-lbl">Always Open</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-num" data-target="100" data-suffix="+">0+</div>
+        <div class="stat-lbl">Equipment Units</div>
+    </div>
+</div>
+
+<!-- ABOUT -->
+<div class="about-section">
+    <div class="row g-0 align-items-center">
+        <div class="col-lg-6 about-text reveal from-left">
+            <div class="section-heading">Who We Are</div>
+            <h2 class="about-title">ABOUT US — <span>Best Gym</span><br>In Town</h2>
+            <div class="about-divider"></div>
+            <p class="about-para">We started just a few years back with only one thing in mind: <strong>DELIVERING FITNESS.</strong> We did not associate with any big gym brands or go the way of a franchise model, because business was secondary. Our primary goal was to create the best training environment without any restrictions.</p>
+            <p class="about-para">We have handpicked the very best equipment — premium training machines, CrossFit cages, bumper plates for the deadlift zone, cardio equipment, and much more. This attention to detail and quality makes us the best gym in town.</p>
+            <p class="about-para">Our facility is designed to provide the best workout experience — cardio equipment, changing rooms, a weight training zone, and one of the largest functional training zones in the city.</p>
+            <a href="/gym_app/Member/" class="btn-hero-primary mt-3" style="display:inline-flex;"><i class="bi bi-arrow-right"></i> Join TitanFlow</a>
+        </div>
+        <div class="col-lg-6 about-img-wrap reveal from-right">
+            <!-- Slideshow -->
+            <div class="about-slideshow">
+                <div class="slide active">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&q=85" alt="Gym 1">
+                </div>
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=900&q=85" alt="Gym 2">
+                </div>
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=900&q=85" alt="Gym 3">
+                </div>
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=900&q=85" alt="Gym 4">
+                </div>
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=900&q=85" alt="Gym 5">
+                </div>
+                <!-- Dots -->
+                <div class="slide-dots">
+                    <span class="dot active" data-i="0"></span>
+                    <span class="dot" data-i="1"></span>
+                    <span class="dot" data-i="2"></span>
+                    <span class="dot" data-i="3"></span>
+                    <span class="dot" data-i="4"></span>
+                </div>
+                <!-- Arrows -->
+                <button class="slide-arrow prev" id="slidePrev"><i class="bi bi-chevron-left"></i></button>
+                <button class="slide-arrow next" id="slideNext"><i class="bi bi-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODULES -->
+<div class="modules-section">
+    <div class="section-heading reveal">Manage Everything</div>
+    <div class="section-title reveal">Our <span>Features</span></div>
+    <div class="row g-3 stagger">
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <a href="/gym_app/Trainer/" class="mod-card" style="--c:#818cf8;">
+                <div class="mod-icon" style="background:rgba(99,102,241,0.15);color:#818cf8;"><i class="bi bi-person-badge"></i></div>
+                <h5>Trainers</h5><p>Manage trainer profiles &amp; specializations</p>
+                <i class="bi bi-arrow-right mod-arrow"></i>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <a href="/gym_app/Member/" class="mod-card" style="--c:#4ade80;">
+                <div class="mod-icon" style="background:rgba(34,197,94,0.15);color:#4ade80;"><i class="bi bi-people"></i></div>
+                <h5>Members</h5><p>Register and manage members</p>
+                <i class="bi bi-arrow-right mod-arrow"></i>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <a href="/gym_app/Membership/" class="mod-card" style="--c:#22d3ee;">
+                <div class="mod-icon" style="background:rgba(6,182,212,0.15);color:#22d3ee;"><i class="bi bi-card-checklist"></i></div>
+                <h5>Memberships</h5><p>Track plans, dates and fees</p>
+                <i class="bi bi-arrow-right mod-arrow"></i>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <a href="/gym_app/Payment/" class="mod-card" style="--c:#fbbf24;">
+                <div class="mod-icon" style="background:rgba(245,158,11,0.15);color:#fbbf24;"><i class="bi bi-credit-card"></i></div>
+                <h5>Payments</h5><p>Record and review payment history</p>
+                <i class="bi bi-arrow-right mod-arrow"></i>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <a href="/gym_app/Exercise/" class="mod-card" style="--c:#f87171;">
+                <div class="mod-icon" style="background:rgba(230,57,70,0.15);color:#f87171;"><i class="bi bi-activity"></i></div>
+                <h5>Exercises</h5><p>Define exercises by muscle group</p>
+                <i class="bi bi-arrow-right mod-arrow"></i>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <a href="/gym_app/Workoutplan/" class="mod-card" style="--c:#c084fc;">
+                <div class="mod-icon" style="background:rgba(168,85,247,0.15);color:#c084fc;"><i class="bi bi-journal-text"></i></div>
+                <h5>Workout Plans</h5><p>Create and assign workout plans</p>
+                <i class="bi bi-arrow-right mod-arrow"></i>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <a href="/gym_app/Equipment/" class="mod-card" style="--c:#f4a261;">
+                <div class="mod-icon" style="background:rgba(244,162,97,0.15);color:#f4a261;"><i class="bi bi-tools"></i></div>
+                <h5>Equipment</h5><p>Track equipment and maintenance</p>
+                <i class="bi bi-arrow-right mod-arrow"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="testimonials-section">
+    <div class="section-heading reveal">What Members Say</div>
+    <div class="section-title reveal">Real <span>Results</span>, Real People</div>
+    <div class="row g-4 stagger">
+        <div class="col-lg-4 col-md-6">
+            <div class="testi-card">
+                <div class="testi-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                <p class="testi-text">"TitanFlow completely changed my life. The trainers are world-class and the equipment is top-notch. I lost 20kg in 6 months and never felt better."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar">AK</div>
+                    <div><div class="testi-name">Alex Kumar</div><div class="testi-role">Member since 2024</div></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="testi-card featured">
+                <div class="testi-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                <p class="testi-text">"The workout plans are incredibly well structured. My trainer pushed me beyond my limits every single session. Best investment I've ever made."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar" style="background:var(--accent);color:#000;">SR</div>
+                    <div><div class="testi-name">Sara Rathi</div><div class="testi-role">Member since 2023</div></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="testi-card">
+                <div class="testi-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></div>
+                <p class="testi-text">"Clean facility, amazing community, and the membership plans are super flexible. I've tried many gyms — TitanFlow is on another level entirely."</p>
+                <div class="testi-author">
+                    <div class="testi-avatar">MP</div>
+                    <div><div class="testi-name">Mike Patel</div><div class="testi-role">Member since 2025</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    /* Slideshow */
+    const slides = document.querySelectorAll('.slide');
+    const dots   = document.querySelectorAll('.dot');
+    let current  = 0, timer;
+
+    function goTo(n) {
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = (n + slides.length) % slides.length;
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+    }
+    function autoPlay() { timer = setInterval(() => goTo(current + 1), 3500); }
+
+    document.getElementById('slideNext').addEventListener('click', () => { clearInterval(timer); goTo(current + 1); autoPlay(); });
+    document.getElementById('slidePrev').addEventListener('click', () => { clearInterval(timer); goTo(current - 1); autoPlay(); });
+    dots.forEach(d => d.addEventListener('click', () => { clearInterval(timer); goTo(+d.dataset.i); autoPlay(); }));
+    autoPlay();
+
+    /* Parallax */
+    const img = document.getElementById('parallax-img');
+    window.addEventListener('scroll', () => {
+        img.style.transform = 'translateY(' + window.scrollY * 0.4 + 'px)';
+    }, { passive: true });
+
+    /* Typing effect */
+    const target = document.getElementById('typed-text');
+    const phrases = ["The Grind Never Sleeps,", "Push Beyond Your Limits,", "Forge Your Legacy,"];
+    let pi = 0, ci = phrases[0].length, deleting = false;
+    function type() {
+        const phrase = phrases[pi];
+        target.textContent = deleting ? phrase.substring(0, ci--) : phrase.substring(0, ci++);
+        if (!deleting && ci > phrase.length) { deleting = true; setTimeout(type, 2000); return; }
+        if (deleting && ci < 0) { deleting = false; pi = (pi + 1) % phrases.length; setTimeout(type, 400); return; }
+        setTimeout(type, deleting ? 40 : 75);
+    }
+    setTimeout(type, 2500);
+
+    /* Counter animation */
+    function animateCounter(el) {
+        const t = parseInt(el.dataset.target);
+        const suffix = el.dataset.suffix || '';
+        let c = 0, step = t / 80;
+        const timer = setInterval(() => {
+            c = Math.min(c + step, t);
+            el.textContent = Math.floor(c) + suffix;
+            if (c >= t) clearInterval(timer);
+        }, 16);
+    }
+
+    /* Intersection observers */
+    const revealObs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); revealObs.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+
+    const counterObs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target); counterObs.unobserve(e.target); } });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.reveal, .stagger').forEach(el => revealObs.observe(el));
+    document.querySelectorAll('.stat-num[data-target]').forEach(el => counterObs.observe(el));
+
+    /* Navbar shrink */
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('nav-scrolled', window.scrollY > 80), { passive: true });
+
+    /* 3D tilt on cards */
+    document.querySelectorAll('.mod-card, .testi-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const r = card.getBoundingClientRect();
+            const x = ((e.clientX - r.left) / r.width  - 0.5) * 8;
+            const y = ((e.clientY - r.top)  / r.height - 0.5) * -8;
+            card.style.transform = `translateY(-5px) rotateX(${y}deg) rotateY(${x}deg)`;
+        });
+        card.addEventListener('mouseleave', () => card.style.transform = '');
+    });
+})();
+</script>
+{% endblock %}

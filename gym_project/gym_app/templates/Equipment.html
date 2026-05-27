@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block nav_equipment %}active{% endblock %}
+
+{% block content %}
+<div class="feature-page">
+
+    <div class="fp-section-label"><i class="bi bi-tools"></i> Manage</div>
+    <div class="fp-title">Equipment <span>/</span> {% if form.id %}Edit Record{% else %}Add New{% endif %}</div>
+
+    <div class="fp-card" style="--c:#f4a261;">
+        <div class="fp-card-head">
+            <div class="fp-card-icon" style="background:rgba(244,162,97,0.15); color:#f4a261;">
+                <i class="bi bi-tools"></i>
+            </div>
+            <div>
+                <h3>{% if form.id %}Edit Equipment{% else %}New Equipment{% endif %}</h3>
+                <p>Track equipment inventory and maintenance schedules</p>
+            </div>
+        </div>
+        <div class="fp-card-body">
+            {% if form.message %}
+                <div class="{% if form.error %}alert-dark-error{% else %}alert-dark-success{% endif %} mb-4">
+                    <i class="bi {% if form.error %}bi-exclamation-circle{% else %}bi-check-circle{% endif %}"></i>
+                    {{ form.message }}
+                </div>
+            {% endif %}
+            <form method="POST" autocomplete="off">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ form.id }}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Equipment Name</label>
+                        <input type="text" class="form-control" name="name" value="{{ form.name }}" placeholder="e.g. Treadmill">
+                        {% if form.inputError.name %}<div class="field-error"><i class="bi bi-exclamation-circle"></i>{{ form.inputError.name }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" name="type">
+                            <option value="">— Select type —</option>
+                            <option value="Cardio" {% if form.type == "Cardio" %}selected{% endif %}>Cardio</option>
+                            <option value="Strength" {% if form.type == "Strength" %}selected{% endif %}>Strength</option>
+                            <option value="Flexibility" {% if form.type == "Flexibility" %}selected{% endif %}>Flexibility</option>
+                            <option value="Free Weights" {% if form.type == "Free Weights" %}selected{% endif %}>Free Weights</option>
+                            <option value="Machines" {% if form.type == "Machines" %}selected{% endif %}>Machines</option>
+                        </select>
+                        {% if form.inputError.type %}<div class="field-error"><i class="bi bi-exclamation-circle"></i>{{ form.inputError.type }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Maintenance Date</label>
+                        <input type="date" class="form-control" name="maintenance_date" value="{{ form.maintenance_date }}">
+                        {% if form.inputError.maintenance_date %}<div class="field-error"><i class="bi bi-exclamation-circle"></i>{{ form.inputError.maintenance_date }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status">
+                            <option value="">— Select status —</option>
+                            <option value="Active" {% if form.status == 'Active' %}selected{% endif %}>✅ Active</option>
+                            <option value="Under Maintenance" {% if form.status == 'Under Maintenance' %}selected{% endif %}>🔧 Under Maintenance</option>
+                            <option value="Out of Service" {% if form.status == 'Out of Service' %}selected{% endif %}>❌ Out of Service</option>
+                        </select>
+                        {% if form.inputError.status %}<div class="field-error"><i class="bi bi-exclamation-circle"></i>{{ form.inputError.status }}</div>{% endif %}
+                    </div>
+                </div>
+                <hr class="form-divider mt-4">
+                <button type="submit" class="btn-fp-submit">
+                    <i class="bi bi-check-lg"></i>{% if form.id %}Update Equipment{% else %}Add Equipment{% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="fp-table-section">
+        <div class="fp-table-heading"><i class="bi bi-table"></i> Records</div>
+        <div class="fp-table-title">All <span>Equipment</span> <span class="count-badge">{{ equipmentList|length }}</span></div>
+        {% if equipmentList %}
+        <div class="data-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr><th>#</th><th>Name</th><th>Type</th><th>Maintenance</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for item in equipmentList %}
+                    <tr>
+                        <td class="muted">{{ forloop.counter }}</td>
+                        <td><i class="bi bi-tools me-2" style="color:#f4a261;"></i>{{ item.name }}</td>
+                        <td class="muted">{{ item.type }}</td>
+                        <td class="muted">{{ item.maintenance_date }}</td>
+                        <td>
+                            {% if item.status == 'Active' %}
+                                <span class="status-badge status-active"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Active</span>
+                            {% elif item.status == 'Under Maintenance' %}
+                                <span class="status-badge status-maintenance"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Maintenance</span>
+                            {% else %}
+                                <span class="status-badge status-inactive"><i class="bi bi-circle-fill" style="font-size:.45rem;"></i>Out of Service</span>
+                            {% endif %}
+                        </td>
+                        <td><a href="/gym_app/Equipment/edit/{{ item.id }}" class="btn-table-edit"><i class="bi bi-pencil"></i> Edit</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-tools"></i>
+            <p>No equipment yet. Add your first item using the form above.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
